@@ -2,7 +2,10 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#05050F">
 <title>Editor PDF · Miguel Mont Industries</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" integrity="sha512-q+4liFwdPC/bNdhUpZx6aXDx/h77yEQtn4I1slHydcbZK34nLaR3cAeYSJshoxIOq3mjEf7xJE8YWIUHMn+oCQ==" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js" integrity="sha512-z8IYLHO8bTgFqj+yrPyIJnzBDf7DDhWwiEsk4sY+Oe6J2M+WQequeGS7qioI5vT6rXgVRb4K1UVQC5ER7MKzKQ==" crossorigin="anonymous"></script>
@@ -205,6 +208,82 @@
   .modal-f .cta{height:40px}
   .preview-wrap{margin-top:14px;display:none;background:#fff;border-radius:10px;padding:10px;text-align:center}
   .preview-wrap img{max-height:110px;max-width:100%}
+
+  /* ============ MÓVIL ============ */
+  @media (max-width: 720px){
+    /* top bar slim: solo dot + acciones (íconos) */
+    header{height:52px;padding:0 8px;gap:6px;overflow-x:auto;overflow-y:hidden}
+    header::-webkit-scrollbar{display:none}
+    .brand b,.brand span{display:none}
+    .brand{gap:0}
+    header .sep{display:none}
+    .tbtn{height:40px;padding:0 9px;font-size:0;gap:0}
+    .tbtn svg{width:20px;height:20px}
+    .tbtn.icon{width:40px}
+    .cta{padding:0 11px}
+    .zoom{font-size:11px;min-width:34px}
+
+    /* barra de herramientas inferior (estilo app) */
+    #tools{
+      position:fixed;left:0;right:0;bottom:0;z-index:40;
+      display:flex;align-items:center;gap:2px;
+      padding:5px 4px calc(5px + env(safe-area-inset-bottom,0px));
+      background:linear-gradient(0deg,var(--chrome),var(--chrome-2));
+      border-top:1px solid var(--line);
+    }
+    #tools .tbtn{flex:1;height:52px;flex-direction:column;justify-content:center;gap:3px;padding:0;font-size:10px;border-radius:10px}
+    #tools .tbtn svg{width:21px;height:21px}
+
+    /* barra contextual (opciones) por encima de las herramientas */
+    #props{
+      position:fixed;left:0;right:0;bottom:calc(62px + env(safe-area-inset-bottom,0px));z-index:39;
+      height:50px;padding:0 10px;gap:8px;
+      background:var(--chrome-2);border-top:1px solid var(--line);
+      overflow-x:auto;overflow-y:hidden;
+    }
+    #props::-webkit-scrollbar{display:none}
+    #props select,#props input[type=number]{height:36px;font-size:13px}
+    #props input[type=number]{width:56px}
+    #props input[type=color]{width:36px;height:36px}
+    #props .tbtn{height:36px;font-size:12px;padding:0 10px;gap:6px}
+    #props .tbtn svg{width:16px;height:16px}
+    #props .plabel{flex:0 0 auto}
+
+    /* altura dinámica: ancla la barra inferior aunque la UI del navegador móvil aparezca/desaparezca */
+    html,body,#app{height:100dvh}
+
+    /* la barra de opciones se oculta sola cuando no hay nada seleccionado (no la barra de herramientas) */
+
+    /* área del documento libre de las barras */
+    #pages{padding:16px 11px calc(150px + env(safe-area-inset-bottom,0px))}
+    main.tool-draw .layer, main.tool-whiteout .layer{touch-action:none}
+
+    /* táctil: las anotaciones capturan el gesto (no hacen scroll) */
+    .ann, .ann *{touch-action:none}
+    .movebar{top:-22px;height:20px}
+    .handle{width:20px;height:20px;right:-10px;bottom:-10px}
+
+    /* estado vacío */
+    .drop{padding:40px 22px}
+    .drop h2{font-size:19px}
+    .drop p{font-size:13px}
+    .drop p br{display:none}
+    .drop .pill{font-size:10px}
+
+    /* modal de firma como hoja inferior */
+    .overlay{padding:10px;align-items:flex-end}
+    .modal{width:100%;max-height:92vh;overflow:auto;border-radius:16px}
+    .tabs{padding:12px 16px 0}
+    .panel{padding:16px}
+    .tab{height:42px}
+    #sigPad,#typePreview{height:150px}
+    .styles button{height:50px;font-size:20px}
+    .field input[type=text]{height:46px}
+    .uploadzone{padding:24px}
+    .modal-h{padding:16px}
+    .modal-f{padding:14px 16px}
+    .modal-f .cta,.modal-f .ghostbtn{height:46px;flex:1}
+  }
 </style>
 </head>
 <body>
@@ -265,8 +344,8 @@
     <div id="empty">
       <div class="drop" id="drop">
         <div class="ic"><svg viewBox="0 0 24 24"><path d="M12 16V4m0 0L8 8m4-4l4 4"/><path d="M4 14v4a2 2 0 002 2h12a2 2 0 002-2v-4"/></svg></div>
-        <h2>Arrastra tu PDF aquí</h2>
-        <p>O haz clic para seleccionarlo. Coloca tu firma, agrega texto<br>y tapa lo que quieras editar. Después descárgalo.</p>
+        <h2>Sube tu PDF</h2>
+        <p>Tócalo para elegirlo — o arrástralo aquí. Coloca tu firma,<br>agrega texto y tapa lo que quieras editar. Luego descárgalo.</p>
         <span class="pill">100% en tu navegador · nada se sube a ningún servidor</span>
       </div>
     </div>
@@ -383,8 +462,9 @@ async function loadPdf(bytes){
   // fit-to-width
   const first = await pdfjsDoc.getPage(1);
   const w1 = first.getViewport({scale:1}).width;
-  const avail = main.clientWidth - 56;
-  scale = Math.max(.45, Math.min(2.2, avail / w1));
+  const margin = window.innerWidth < 720 ? 22 : 56;
+  const avail = main.clientWidth - margin;
+  scale = Math.max(.4, Math.min(2.2, avail / w1));
 
   let rotated = false;
   for (let i=1; i<=pdfjsDoc.numPages; i++){
@@ -409,6 +489,7 @@ async function loadPdf(bytes){
   await renderAll();
 
   emptyEl.style.display = "none";
+  document.body.classList.add("loaded");
   document.querySelectorAll("[data-tool],#btnSign,#btnImage,#zoomIn,#zoomOut,#btnDownload").forEach(b=>b.disabled=false);
   setTool("select");
   refreshUndo();
@@ -1069,6 +1150,22 @@ function rasterLine(text,size,color,fontCss){
   x.font=`${fp}px ${fontCss}`; x.fillStyle=color; x.textBaseline="alphabetic"; x.fillText(text,1,fp);
   return { dataUrl:c.toDataURL("image/png"), wPt:w/dpr, hPt:h/dpr };
 }
+
+/* re-fit width on orientation change (ignore keyboard, which only changes height) */
+let _lastW = window.innerWidth, _rzT = null;
+window.addEventListener("resize", ()=>{
+  clearTimeout(_rzT);
+  _rzT = setTimeout(()=>{
+    if (!pdfjsDoc || rendering) return;
+    if (Math.abs(window.innerWidth - _lastW) < 40) return;
+    _lastW = window.innerWidth;
+    const w1 = pageData[0] && pageData[0].wPt; if (!w1) return;
+    const margin = window.innerWidth < 720 ? 22 : 56;
+    scale = Math.max(.4, Math.min(3, (main.clientWidth - margin) / w1));
+    renderAll();
+  }, 250);
+});
+
 </script>
 </body>
 </html>
